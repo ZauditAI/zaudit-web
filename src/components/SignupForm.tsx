@@ -21,9 +21,10 @@ export default function SignupForm() {
 
   const apiUrl = import.meta.env.VITE_API_URL;
   // In development, use proxy. In production, use VITE_API_URL
-  const endpoint = apiUrl 
-    ? `${apiUrl.replace(/\/$/, '')}/api/contact`
-    : '/api/contact';
+  const endpoint = apiUrl
+  ? `${apiUrl.replace(/\/$/, '')}/api/early-access`
+  : 'https://zaudit-form-backend.fly.dev/api/early-access';
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
