@@ -7,6 +7,9 @@ import { z } from 'zod';
 
 dotenv.config();
 
+// -------------------------
+// Env Vars
+// -------------------------
 const {
   PORT = 4000,
   SMTP_HOST,
@@ -17,32 +20,45 @@ const {
   MAIL_FROM = '"Zaudit Early Access" <zaudit.co@gmail.com>',
   MAIL_TO = 'zaudit.co@gmail.com',
   ALLOWED_ORIGINS,
+  NODE_ENV
 } = process.env;
 
+// -------------------------
+// Logger
+// -------------------------
 const logger = pino({
   level: process.env.LOG_LEVEL ?? 'info',
-  transport: process.env.NODE_ENV !== 'production'
+  transport: NODE_ENV !== 'production'
     ? {
         target: 'pino-pretty',
-        options: { colorize: true, translateTime: 'SYS:standard' },
+        options: { colorize: true, translateTime: 'SYS:standard' }
       }
     : undefined,
 });
 
+// -------------------------
+// App Setup
+// -------------------------
 const app = express();
+app.use(express.json());
 
-const corsOrigins = ALLOWED_ORIGINS?.split(',').map((origin) => origin.trim()).filter(Boolean);
+// -------------------------
+// CORS
+// -------------------------
+const corsOrigins = ALLOWED_ORIGINS?.split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 app.use(
   cors({
-    origin: corsOrigins?.length ? corsOrigins : true,
+    origin: corsOrigins?.length ? corsOrigins : '*',
     methods: ['POST', 'OPTIONS'],
-    credentials: false,
   })
 );
 
-app.use(express.json());
-
+// -------------------------
+// Validation Schema
+// -------------------------
 const submissionSchema = z.object({
   name: z.string().min(2, 'Name is required'),
   email: z.string().email('Valid email is required'),
@@ -50,39 +66,50 @@ const submissionSchema = z.object({
   city: z.string().min(2, 'City is required'),
 });
 
+// -------------------------
+// Email Transport
+// -------------------------
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,
   port: SMTP_PORT ? Number(SMTP_PORT) : undefined,
   secure: SMTP_SECURE === 'true',
-  auth: SMTP_USER && SMTP_PASS ? { user: SMTP_USER, pass: SMTP_PASS } : undefined,
+  auth: SMTP_USER && SMTP_PASS
+    ? { user: SMTP_USER, pass: SMTP_PASS }
+    : undefined,
 });
 
+// Verify SMTP & warn (but don't crash)
 async function verifyTransporter() {
   try {
     if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
-      throw new Error('SMTP credentials are missing. Check environment variables.');
+      throw new Error('SMTP is not configured correctly.');
     }
     await transporter.verify();
     logger.info('SMTP connection verified');
   } catch (error) {
-    logger.error({ err: error }, 'Failed to verify SMTP connection');
-    process.exitCode = 1;
+    logger.error({ err: error }, 'SMTP connection failed');
   }
 }
 
-app.post('/api/contact', async (req, res) => {
+// -------------------------
+// API Route
+// -------------------------
+app.post('/api/early-access', async (req, res) => {
   try {
     const submission = submissionSchema.parse(req.body);
 
     if (!MAIL_TO || !MAIL_FROM) {
-      logger.error('MAIL_TO and MAIL_FROM environment variables are required');
-      return res.status(500).json({ success: false, message: 'Mail configuration missing' });
+      logger.error('MAIL_TO and MAIL_FROM must be set');
+      return res.status(500).json({
+        success: false,
+        message: 'Mail configuration missing',
+      });
     }
 
     const mailOptions = {
       from: MAIL_FROM,
       to: MAIL_TO,
-      subject: `[Zaudit] New early access request from ${submission.name}`,
+      subject: `[Zaudit] New Early Access Request from ${submission.name}`,
       text: [
         `Name: ${submission.name}`,
         `Email: ${submission.email}`,
@@ -102,9 +129,12 @@ app.post('/api/contact', async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    logger.info({ submission }, 'Submission forwarded via email');
+    logger.info({ submission }, 'Early access request emailed');
 
-    res.json({ success: true, message: 'Request received. We will be in touch soon.' });
+    res.json({
+      success: true,
+      message: 'Request received. We will be in touch soon.',
+    });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({
@@ -114,7 +144,7 @@ app.post('/api/contact', async (req, res) => {
       });
     }
 
-    logger.error({ err: error }, 'Failed to send email');
+    logger.error({ err: error }, 'Failed to handle early-access submission');
     res.status(500).json({
       success: false,
       message: 'Could not submit request. Please try again later.',
@@ -122,20 +152,22 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
+// -------------------------
+// Health Check
+// -------------------------
 app.get('/healthz', async (_req, res) => {
   try {
     await transporter.verify();
     res.json({ ok: true, smtp: true });
-  } catch (error) {
-    logger.error({ err: error }, 'Health check failed');
+  } catch {
     res.status(500).json({ ok: false, smtp: false });
   }
 });
 
+// -------------------------
+// Start Server
+// -------------------------
 app.listen(Number(PORT), () => {
-  logger.info(`Server listening on port ${PORT}`);
+  logger.info(`🚀 Server running on port ${PORT}`);
   verifyTransporter();
 });
-
-
-
