@@ -40,19 +40,29 @@ export default function SignupForm() {
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
-
+      // Check if response is OK before trying to parse JSON
       if (!response.ok) {
-        // Handle validation errors with field-specific messages
-        if (data?.errors) {
-          const errorMessages = Object.values(data.errors)
-            .flat()
-            .filter(Boolean)
-            .join(', ');
-          throw new Error(errorMessages || data?.message || 'Please check your input and try again.');
+        let errorMessage = 'Something went wrong. Please try again.';
+        try {
+          const errorData = await response.json();
+          // Handle validation errors with field-specific messages
+          if (errorData?.errors) {
+            const errorMessages = Object.values(errorData.errors)
+              .flat()
+              .filter(Boolean)
+              .join(', ');
+            errorMessage = errorMessages || errorData?.message || errorMessage;
+          } else if (errorData?.message) {
+            errorMessage = errorData.message;
+          }
+        } catch {
+          // If response is not JSON, use status text
+          errorMessage = response.statusText || errorMessage;
         }
-        throw new Error(data?.message ?? 'Something went wrong. Please try again.');
+        throw new Error(errorMessage);
       }
+
+      const data = await response.json();
 
       setStatus('success');
       setMessage(data?.message ?? 'Thank you! We will be in touch soon.');
@@ -64,7 +74,12 @@ export default function SignupForm() {
       });
     } catch (error) {
       setStatus('error');
-      setMessage(error instanceof Error ? error.message : 'Could not submit the form. Try again later.');
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        setMessage('Unable to connect to the server. Please check your internet connection and try again.');
+      } else {
+        setMessage(error instanceof Error ? error.message : 'Could not submit the form. Try again later.');
+      }
+      console.error('Form submission error:', error);
     } finally {
       setIsSubmitting(false);
     }

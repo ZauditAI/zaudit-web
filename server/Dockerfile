@@ -3,10 +3,10 @@ FROM node:20-slim AS base
 ENV NODE_ENV=production
 WORKDIR /app
 
-COPY package*.json ./
+COPY server/package*.json ./
 RUN npm install --omit=dev
 
-COPY src ./src
+COPY server/src ./src
 
 EXPOSE 8080
 

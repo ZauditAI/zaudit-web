@@ -10,8 +10,8 @@ dotenv.config();
 // -------------------------
 // Env Vars
 // -------------------------
+const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 const {
-  PORT = 4000,
   SMTP_HOST,
   SMTP_PORT,
   SMTP_SECURE,
@@ -42,6 +42,17 @@ const logger = pino({
 const app = express();
 app.use(express.json());
 
+// Request logging middleware
+app.use((req, res, next) => {
+  logger.info({
+    method: req.method,
+    path: req.path,
+    origin: req.headers.origin,
+    ip: req.ip || req.connection.remoteAddress,
+  }, 'Incoming request');
+  next();
+});
+
 // -------------------------
 // CORS
 // -------------------------
@@ -49,10 +60,17 @@ const corsOrigins = ALLOWED_ORIGINS?.split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
 
+if (corsOrigins?.length) {
+  logger.info({ origins: corsOrigins }, 'CORS configured with specific origins');
+} else {
+  logger.warn('CORS configured to allow all origins');
+}
+
 app.use(
   cors({
     origin: corsOrigins?.length ? corsOrigins : '*',
-    methods: ['POST', 'OPTIONS'],
+    methods: ['POST', 'OPTIONS', 'GET'],
+    credentials: true,
   })
 );
 
@@ -153,21 +171,46 @@ app.post('/api/early-access', async (req, res) => {
 });
 
 // -------------------------
+// Root endpoint for debugging
+// -------------------------
+app.get('/', (_req, res) => {
+  res.json({ 
+    service: 'zaudit-form-backend',
+    status: 'running',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// -------------------------
 // Health Check
 // -------------------------
 app.get('/healthz', async (_req, res) => {
-  try {
-    await transporter.verify();
-    res.json({ ok: true, smtp: true });
-  } catch {
-    res.status(500).json({ ok: false, smtp: false });
+  // Health check should always return 200 if server is running
+  // SMTP verification failures shouldn't prevent Fly.io from routing traffic
+  const smtpConfigured = !!(SMTP_HOST && SMTP_USER && SMTP_PASS);
+  let smtpVerified = false;
+  
+  if (smtpConfigured) {
+    try {
+      await transporter.verify();
+      smtpVerified = true;
+    } catch (error) {
+      logger.warn({ err: error }, 'SMTP verification failed in health check');
+    }
   }
+  
+  res.json({ 
+    ok: true, 
+    smtp: { configured: smtpConfigured, verified: smtpVerified },
+    timestamp: new Date().toISOString()
+  });
 });
 
 // -------------------------
 // Start Server
 // -------------------------
-app.listen(Number(PORT), () => {
+app.listen(PORT, '0.0.0.0', () => {
   logger.info(`🚀 Server running on port ${PORT}`);
+  logger.info({ port: PORT, nodeEnv: NODE_ENV }, 'Server started');
   verifyTransporter();
 });
