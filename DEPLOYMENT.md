@@ -1,0 +1,11 @@
+# Zaudit website deployment
+
+The live site is https://zaudit.co, deployed by the existing GitHub Pages workflow on pushes to main. The DNS and Pages custom domain remain unchanged.
+
+Run `npm ci` and `npm run build`. The deployment artifact is `build/`. `public/release.json` records the Mac download size and SHA-256. Update the disk image and manifest together. Only the compiled early-access app is distributed here; no gateway credentials, user books or native engine source belong in this repository.
+
+The AI gateway is https://zaudit-gateway-production.up.railway.app. Its health endpoint is `/health`. It uses the separate Zaudit Supabase project for sign-in and OpenRouter for planning. The native app contains the public endpoint configuration. OpenRouter credentials stay on Railway. Payments are disabled; trial requests go to vaibhavmaloopm@gmail.com and access is granted by the operator.
+
+Current download: Apple Silicon, macOS 13+, version 0.2.0 early access. It is ad-hoc signed, not Developer ID signed or notarized. Public installation without Gatekeeper intervention remains blocked on Apple signing/notarization. Do not describe this as a signed production release or full Tally parity.
+
+Rollback: revert the website release commit and let the Pages workflow deploy. Do not overwrite customer databases or remove their local books. Gateway releases and the Mac app have separate deployment lifecycles.

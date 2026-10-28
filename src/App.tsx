@@ -1,60 +1,43 @@
-import HeroSection from './components/HeroSection';
-import LaunchCountdown from './components/LaunchCountdown';
-import ProblemSection from './components/ProblemSection';
-import SolutionSection from './components/SolutionSection';
-import ProductPreview from './components/ProductPreview';
-import SignupForm from './components/SignupForm';
-import Footer from './components/Footer';
-import FloatingCTA from './components/FloatingCTA';
-import ComparisonHero from './components/ComparisonHero';
-import CompetitiveOverview from './components/CompetitiveOverview';
-import CostVsFeature from './components/CostVsFeature';
-import AutomationProductivity from './components/AutomationProductivity';
-import WhySwitch from './components/WhySwitch';
+import Guides from './Guides';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowUpRight, ArrowRight, Check, Download, X, Menu, Plus, Search, ChevronDown, Monitor, Apple, ReceiptText, Boxes, Wallet, BookOpen, Command } from 'lucide-react';
 
-export default function App() {
-  return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#040714] antialiased">
-      <div className="pointer-events-none absolute inset-0 -z-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(14,165,233,0.14),transparent_35%),radial-gradient(circle_at_90%_15%,rgba(99,102,241,0.14),transparent_38%),radial-gradient(circle_at_20%_70%,rgba(16,185,129,0.15),transparent_36%),radial-gradient(circle_at_80%_80%,rgba(249,115,22,0.12),transparent_32%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0.02)_40%,transparent_45%),linear-gradient(300deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0.02)_38%,transparent_45%)] opacity-70" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:160px_160px]" />
-        <div className="absolute left-1/2 top-[-6rem] h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-gradient-to-br from-[#0ea5e9]/25 via-[#22d3ee]/15 to-transparent blur-[120px]" />
-        <div className="absolute right-[-10%] bottom-[-6rem] h-[460px] w-[420px] rounded-full bg-gradient-to-tr from-[#f97316]/20 via-[#f59e0b]/12 to-transparent blur-[120px]" />
-      </div>
-
-      <div className="relative z-10">
-        {/* Hero Section */}
-        <HeroSection />
-
-        {/* Launch countdown — just below landing */}
-        <LaunchCountdown />
-
-        {/* Problem Section */}
-        <ProblemSection />
-
-        {/* Solution Section */}
-        <SolutionSection />
-
-        {/* Product Preview */}
-        <ProductPreview />
-
-        {/* Comparison Page Sections */}
-        <ComparisonHero />
-        <CompetitiveOverview />
-        <CostVsFeature />
-        <AutomationProductivity />
-        <WhySwitch />
-
-        {/* Signup Form */}
-        <SignupForm />
-
-        {/* Footer */}
-        <Footer />
-
-        {/* Floating CTA */}
-        <FloatingCTA />
-      </div>
-    </div>
-  );
+type Release = {version:string; downloads:Record<string,{url:string;sha256:string;label:string}>};
+const examples = {
+  sales: {title:'Sales', amount:'₹48,200', caption:'Sales this month', columns:['Invoice','Customer','Amount','Status'], rows:[['INV-104','Mehta Stores','₹12,400','Paid'],['INV-103','Asha Traders','₹8,600','Due'],['INV-102','Green Leaf Café','₹18,000','Paid'],['INV-101','Kumar & Sons','₹9,200','Paid']]},
+  payments: {title:'Payments',amount:'₹8,600',caption:'Money to collect',columns:['Customer','Invoice','Amount','Due date'],rows:[['Asha Traders','INV-103','₹8,600','30 Oct'],['Mehta Stores','INV-104','₹0','Paid'],['Green Leaf Café','INV-102','₹0','Paid'],['Kumar & Sons','INV-101','₹0','Paid']]},
+  reports: {title:'Reports',amount:'₹8,600',caption:'Outstanding payments',columns:['Ledger','Type','Debit','Credit'],rows:[['Cash','Asset','₹20,000','—'],['Customers','Asset','₹8,600','—'],['Sales','Income','—','₹28,600'],['Total','','₹28,600','₹28,600']]}
+};
+export default function App(){
+ const [path,setPath]=useState(location.hash.startsWith('#/')?location.hash.slice(1):'/');
+ useEffect(()=>{const change=()=>{if(!location.hash.startsWith('#/'))return;setPath(location.hash.slice(1));setMenu(false);window.scrollTo(0,0);};window.addEventListener('hashchange',change);return()=>window.removeEventListener('hashchange',change);},[]);
+ useEffect(()=>{document.title=path==='/'?'Zaudit — Accounting for small businesses':'Zaudit — '+(path==='/shortcuts'?'Keyboard shortcuts':'Import guides');},[path]);
+ const [tab,setTab]=useState<keyof typeof examples>('sales');
+ const [modal,setModal]=useState<'download'|'signin'|null>(null);
+ const [menu,setMenu]=useState(false);const [release,setRelease]=useState<Release|null>(null);const [copied,setCopied]=useState('');
+ const dialog=useRef<HTMLDialogElement>(null);const example=examples[tab];
+ useEffect(()=>{fetch('/release.json').then(r=>r.ok?r.json():null).then(setRelease).catch(()=>setRelease(null));},[]);
+ useEffect(()=>{if(modal)dialog.current?.showModal();else dialog.current?.close();},[modal]);
+ const close=()=>setModal(null);
+ return <><a className="skip" href="#main">Skip to content</a>
+ <header className="header"><a className="wordmark" href="#/" aria-label="Zaudit home"><span className="brand-mark">z</span>zaudit<span className="brand-dot">.</span></a>
+ <nav className={menu?'nav open':'nav'} aria-label="Main navigation"><a href="#/">Overview</a><a href="#/imports">Import your books</a><a href="#/shortcuts">Shortcuts</a><a href="mailto:vaibhavmaloopm@gmail.com?subject=Try%20Zaudit%20AI">Try AI ↗</a></nav>
+ <div className="header-actions"><button className="text-button signin" onClick={()=>setModal('signin')}>Sign in</button><button className="button small" onClick={()=>setModal('download')}>Get Zaudit <ArrowUpRight size={16}/></button><button className="menu-button" aria-label="Toggle navigation" aria-expanded={menu} onClick={()=>setMenu(!menu)}>{menu?<X/>:<Menu/>}</button></div></header>
+ <main id="main">{path!=='/'?<Guides key={path} path={path}/>:<><section className="hero wrap"><div className="hero-copy"><div className="eyebrow"><span className="status-dot"/> FOR SMALL BUSINESSES</div><h1>Your books.<br/><span>Your way.</span></h1><p>Free accounting for small businesses.<br className="desktop-break"/> Invoices, payments and reports, on your Mac.</p><div className="hero-actions"><button className="button" onClick={()=>setModal('download')}>Get Zaudit <Download size={18}/></button><a className="quiet-link" href="#/imports">Moving from another system? <ArrowRight size={17}/></a></div><div className="hero-note">Mac early access. Free accounting. AI by invitation.</div></div>
+ <div className="product-frame" id="example"><div className="window-bar"><div className="window-dots"><i/><i/><i/></div><span>Zaudit</span><span className="example-label">Example books</span></div><div className="product-body"><aside className="product-sidebar"><div className="store-avatar">M</div><strong>Mehta Stores</strong><span className="store-type">My business</span><div className="sidebar-divider"/><button className={tab==='sales'?'selected':''} onClick={()=>setTab('sales')}><ReceiptText size={16}/>Sales</button><button className={tab==='payments'?'selected':''} onClick={()=>setTab('payments')}><Wallet size={16}/>Payments</button><button className={tab==='reports'?'selected':''} onClick={()=>setTab('reports')}><BookOpen size={16}/>Reports</button><div className="sidebar-bottom"><span className="tiny-dot"/> On this computer</div></aside><div className="product-content"><div className="product-title"><h2>{example.title}</h2><span>October 2026 <ChevronDown size={12}/></span></div><div className="balance"><span>{example.caption}</span><strong>{example.amount}</strong></div><div className="table-toolbar"><span><Search size={13}/> {'Recent entries'}</span><span className="entry-count">4 entries</span></div><div className="table-scroll"><table><thead><tr>{example.columns.map(c=><th key={c}>{c}</th>)}</tr></thead><tbody>{example.rows.map((row,i)=><tr key={i}>{row.map((c,j)=><td key={j}>{j===3&&['Paid','Due'].includes(c)?<span className={'badge '+c.toLowerCase()}>{c}</span>:c}</td>)}</tr>)}</tbody></table></div><div className="product-bottom"><Command size={12}/> Familiar keyboard shortcuts <span>Example only</span></div></div></div></div></section>
+ <section className="migration-band wrap"><div><span className="eyebrow">ALREADY USING TALLY?</span><h2>Keep the keys you know.</h2><p>F5 for payments. F6 for receipts. F8 for sales.<br/>Familiar voucher shortcuts in a clean workspace.</p><a className="inline-link" href="#/shortcuts">See the shortcut guide →</a></div><div className="key-strip">{[["F4","Contra"],["F5","Payment"],["F6","Receipt"],["F7","Journal"],["F8","Sales"],["F9","Purchase"]].map(([key,label])=><a href="#/shortcuts" key={key}><kbd>{key}</kbd><span>{label}</span></a>)}</div></section><div className="plain-strip wrap"><span><Check size={16}/>Keep your books on your computer</span><span><Check size={16}/>Work without an internet connection</span><span><Check size={16}/>Review changes before they’re saved</span></div>
+ <section id="books" className="section wrap"><div className="section-top"><div className="eyebrow">THE EVERYDAY WORK</div><h2>The everyday work, covered.</h2></div><div className="features"><article><ReceiptText/><h3>Sales & purchases</h3><p>Create untaxed invoices. Record bills.<br/>Keep customer and supplier records.</p></article><article><Wallet/><h3>Money in & out</h3><p>Record payments. See who owes you<br/>and what you need to pay.</p></article><article><BookOpen/><h3>Your records</h3><p>Keep customer and supplier ledgers.<br/>Back up your books on your Mac.</p></article><article><BookOpen/><h3>Reports</h3><p>Check your profit, balances<br/>and outstanding payments.</p></article></div></section>
+ <section className="help-section"><div className="wrap help-grid"><div><div className="eyebrow">WHEN YOU NEED A HAND</div><h2>A little help<br/>with the busywork.</h2><p>Ask in your own words.<br/>Check the plan. Approve the changes.</p><a className="quiet-link" href="#questions">How it works <ArrowRight size={17}/></a></div><div className="conversation" aria-label="Example of an accounting request"><div className="conversation-label">AN EXAMPLE</div><div className="request">Record ₹5,000 from Asha Traders and show me what’s still due.</div><div className="response"><span className="assistant-mark">z</span><div><strong>Which invoice is this payment for?</strong><div className="invoice-choice"><span>INV-103 <small>Asha Traders</small></span><strong>₹8,600 due</strong></div><p>After this payment: ₹3,600 remaining.</p><span className="review-example">Review payment <ArrowRight size={14}/></span></div></div><div className="conversation-foot">You review every entry before it changes your books.</div></div></div></section>
+ <section className="section wrap" id="pricing"><div className="section-top"><div className="eyebrow">A SIMPLE CHOICE</div><h2>Accounting is free.</h2></div><div className="pricing-grid"><div className="price-plan"><div className="price-heading"><h3>Zaudit</h3><span>Free</span></div><p>Your day-to-day accounting, on your computer.</p><ul><li><Check/>Sales and purchase entries</li><li><Check/>Payments and outstanding bills</li><li><Check/>Financial reports</li><li><Check/>No monthly accounting subscription</li></ul><button className="button" onClick={()=>setModal('download')}>Get Zaudit <ArrowUpRight size={17}/></button></div><div className="price-plan optional"><div className="price-heading"><h3>AI assistance</h3><span>Optional</span></div><p>Help with tasks you describe in your own words.</p><ul><li><Check/>Plans for work with several steps</li><li><Check/>Questions when a decision is needed</li><li><Check/>Your approval before posting</li><li><Check/>Needs an internet connection</li></ul><p className="price-note">Want to try the AI features?<br/><a href="mailto:vaibhavmaloopm@gmail.com?subject=Try%20Zaudit%20AI">Email vaibhavmaloopm@gmail.com</a></p></div></div></section>
+ <section className="section wrap faq" id="questions"><div><div className="eyebrow">A FEW QUESTIONS</div><h2>Before you start.</h2></div><div className="faq-list">{[
+ ['How do I install it?','Download the Mac disk image, open it and drag Zaudit Local to Applications. No Docker or virtual machine. This early-access build is not Apple-notarized; macOS may block it. A signed public installer is still coming.'],
+ ['Do I need to stay online?','You need internet for installation, account sign-in and AI assistance. Once installed, your local accounting can work offline.'],
+ ['Where are my books kept?','On the computer running Zaudit. Keep regular backups. If you use online assistance, the information needed for that request is sent to the service.'],
+ ['Can I bring my Tally data?','Read the preparation guides before moving any books. The lightweight Mac app does not yet import Tally backups, XML or spreadsheets. Keep your existing system for your live accounts.'],
+ ['Is it ready for my business?','This is an early-access accounting app for testing. Inventory, GST, payroll and migration are not included yet. It is not a complete Tally replacement.']
+ ].map(([q,a])=><details key={q}><summary>{q}<Plus size={17}/></summary><p>{a}</p></details>)}</div></section>
+ <section className="last-call wrap"><h2>Let’s get your books in order.</h2><button className="button" onClick={()=>setModal('download')}>Get Zaudit <ArrowUpRight size={18}/></button></section>
+ </>}</main><footer className="footer wrap"><a href="#/" className="wordmark"><span className="brand-mark">z</span>zaudit.</a><span>Made for small businesses.</span><div><button className="text-button" onClick={()=>setModal('download')}>Downloads</button><a href="#/imports">Import guides</a><a href="#/shortcuts">Shortcuts</a><span>© 2026 Zaudit</span></div></footer>
+ <dialog ref={dialog} onCancel={close} onClick={e=>{if(e.target===dialog.current)close();}}><button className="dialog-close" aria-label="Close" onClick={close}><X size={21}/></button>{modal==='download'?<><div className="eyebrow">MAC EARLY ACCESS</div><h2>Download. Open. Start.</h2><p>A small app for your books. No Docker, virtual machine or separate database to install.</p><div className="download-list"><div className="download-row"><Apple/><div><strong>Mac · Apple Silicon</strong><span>macOS 13 or later · 231 KB disk image</span></div>{release?.downloads?.mac?<a className="button small" href={release.downloads.mac.url} download>Download DMG <Download size={15}/></a>:<span>Download unavailable</span>}</div></div><ol><li>Open the downloaded disk image.</li><li>Drag Zaudit Local to Applications, then open it.</li><li>Create a company. For AI, open AI assistance and sign in.</li></ol><p className="download-note">Early-access build. Not Apple-notarized yet; macOS may prevent it from opening. Intel Macs and Windows are not supported by this download.</p><p>Accounting works offline. AI needs internet and an activated trial. <a href="mailto:vaibhavmaloopm@gmail.com?subject=Try%20Zaudit%20AI">Email us for AI access.</a></p><details><summary>What works today</summary><p>Ledgers, balanced vouchers, untaxed invoices, partial payments, financial reports, backups and reviewed AI workflows. Inventory, GST, payroll and importing existing books are not included.</p></details><details><summary>Verify your download</summary>{release?.downloads?.mac&&<div className="checksum"><strong>SHA-256</strong><code>{release.downloads.mac.sha256}</code><button className="text-button" onClick={async()=>{try{await navigator.clipboard.writeText(release.downloads.mac.sha256);setCopied('mac');}catch{setCopied('');}}}>{copied==='mac'?'Copied':'Copy checksum'}</button></div>}</details></>:<><div className="eyebrow">IN YOUR APP</div><h2>Sign in to Zaudit.</h2><p>Open Zaudit Local from Applications. Choose AI assistance, then sign in or create an account.</p><p>Your local accounting works without signing in. AI access is by invitation.</p><a className="button" href="mailto:vaibhavmaloopm@gmail.com?subject=Try%20Zaudit%20AI">Request AI access <ArrowUpRight size={17}/></a><p><button className="text-button" onClick={()=>setModal('download')}>Get the Mac app →</button></p></>}</dialog>
+ </>;
 }
