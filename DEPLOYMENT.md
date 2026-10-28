@@ -6,6 +6,8 @@ Run `npm ci` and `npm run build`. The deployment artifact is `build/`. `public/r
 
 The AI gateway is https://zaudit-gateway-production.up.railway.app. Its health endpoint is `/health`. It uses the separate Zaudit Supabase project for sign-in and OpenRouter for planning. The native app contains the public endpoint configuration. OpenRouter credentials stay on Railway. Payments are disabled; trial requests go to vaibhavmaloopm@gmail.com and access is granted by the operator.
 
-Current download: Apple Silicon, macOS 13+, version 0.2.0 early access. It is ad-hoc signed, not Developer ID signed or notarized. Public installation without Gatekeeper intervention remains blocked on Apple signing/notarization. Do not describe this as a signed production release or full Tally parity.
+Current download: Apple Silicon, macOS 13+, version 0.2.1 early access. It is ad-hoc signed, not Developer ID signed or notarized. Public installation without Gatekeeper intervention remains blocked on Apple signing/notarization. Do not describe this as a signed production release or full Tally parity.
 
 Rollback: revert the website release commit and let the Pages workflow deploy. Do not overwrite customer databases or remove their local books. Gateway releases and the Mac app have separate deployment lifecycles.
+
+AI remains invitation-only by owner request. The app offers sign-in for activated trial accounts, not public signup. Custom SMTP is not configured. Confirmation redirects now point to https://zaudit.co/auth.html, which clears response fragments and returns users to the native app.
