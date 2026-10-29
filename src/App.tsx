@@ -16,7 +16,7 @@ export default function App(){
  const [modal,setModal]=useState<'download'|'signin'|null>(null);
  const [menu,setMenu]=useState(false);const [release,setRelease]=useState<Release|null>(null);const [copied,setCopied]=useState('');
  const dialog=useRef<HTMLDialogElement>(null);const example=examples[tab];
- useEffect(()=>{fetch('/release.json?v=0.11.0',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(setRelease).catch(()=>setRelease(null));},[]);
+ useEffect(()=>{fetch('/release.json?v=0.11.1',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(setRelease).catch(()=>setRelease(null));},[]);
  useEffect(()=>{if(modal)dialog.current?.showModal();else dialog.current?.close();},[modal]);
  const close=()=>setModal(null);
  return <><a className="skip" href="#main">Skip to content</a>
