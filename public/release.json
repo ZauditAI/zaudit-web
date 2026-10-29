@@ -1,11 +1,11 @@
 {
-  "version": "0.2.1-preview",
+  "version": "0.3.0-preview",
   "downloads": {
     "mac": {
-      "url": "/downloads/Zaudit-Local-0.2.1-arm64-preview.dmg",
-      "sha256": "e41a3db86b0ca3de7df8dd5eac98bf76965c1f786edaf3a51b97b8e31cc0f33c",
+      "url": "/downloads/Zaudit-Local-0.3.0-arm64-preview.dmg",
+      "sha256": "d421bed615e4295d10d3932f4767b9a38648f32f7dd4909bc02bc780c3370ea0",
       "label": "Mac Apple Silicon early access",
-      "bytes": 230921
+      "bytes": 519113
     }
   },
   "gateway": "https://zaudit-gateway-production.up.railway.app",
