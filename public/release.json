@@ -6,6 +6,16 @@
       "sha256": "071557a299022e0b0b6f0e25bcd391e2a860e666fd1603992de1be4536ad6cf0",
       "label": "Mac Apple Silicon early access",
       "bytes": 981940
+    },
+    "windows": {
+      "url": "https://github.com/ZauditAI/zaudit-web/releases/download/windows-0.18.0/Zaudit-Local-0.18.0-Windows-x64-Setup.exe",
+      "sha256": "b270b40acdb6897af980cb162848e70e372b78bee35c3789468540d88086fc61",
+      "bytes": 55123585,
+      "label": "Windows x64",
+      "architectures": [
+        "x64"
+      ],
+      "authenticode": false
     }
   },
   "gateway": "https://zaudit-gateway-production.up.railway.app",
