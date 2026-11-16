@@ -4,7 +4,7 @@ import { Apple, Download, Monitor } from 'lucide-react';
 type Package = { url: string; label: string; sha256: string; bytes: number; architectures?: string[] };
 export type DesktopRelease = { version: string; notarized?: boolean; downloads: Record<string, Package> };
 
-export default function DesktopDownloads({ release }: { release: DesktopRelease | null }) {
+export default function DesktopDownloads({ release, close }: { release: DesktopRelease | null; close: () => void }) {
   const [copied, setCopied] = useState('');
   const mac = release?.downloads.mac;
   const windows = release?.downloads.windows;
@@ -22,7 +22,7 @@ export default function DesktopDownloads({ release }: { release: DesktopRelease 
     {windows && <p><strong>Windows</strong> — Run setup, then open Zaudit Local from Start. This early-access installer may show an unknown-publisher warning.</p>}
     {mac && <p><strong>Mac</strong> — Open the disk image and drag Zaudit Local to Applications. {release?.notarized ? 'The app is signed and notarized.' : 'Apple notarization is pending. macOS may prevent the app from opening.'}</p>}
     <p>Create a company to start keeping books offline. For AI, open AI assistance and sign in with an invited account. <a href="mailto:vaibhavmaloopm@gmail.com?subject=Try%20Zaudit%20AI">Request AI access</a>.</p>
-    <details><summary>What works today</summary><p>Ledgers, vouchers, untaxed invoices, stock, partial payments, bank reconciliation, financial reports, CSV exports and local backups. AI can prepare and review accounting workflows. GST filing, payroll and importing existing Tally books are still in development.</p></details>
+    <p><a href="#/start" onClick={close}>Read the setup and first-entry guide →</a></p><details><summary>What works today</summary><p>Ledgers, vouchers, untaxed invoices, stock, partial payments, bank reconciliation, financial reports, CSV exports and local backups. AI can prepare and review accounting workflows. Windows also supports manual monthly pay runs and ledger history import from supported Tally company ZIPs. GST filing is handled on the GST portal.</p></details>
     {!!rows.length && <details><summary>Verify your download</summary>{rows.map(({key,item,title}) =>
       <div className="checksum" key={key}><strong>{title} · SHA-256</strong><code>{item.sha256}</code><button className="text-button" onClick={async()=>{await navigator.clipboard.writeText(item.sha256);setCopied(key)}}>{copied===key?'Copied':'Copy checksum'}</button></div>
     )}</details>}
