@@ -8,15 +8,15 @@
       "bytes": 981940
     },
     "windows": {
-      "url": "https://github.com/ZauditAI/zaudit-web/releases/download/windows-0.18.1/Zaudit-Local-0.18.1-Windows-x64-Setup.exe",
-      "sha256": "cbd7cf03b08f5383d7a67b92143ecf19755a806fb5bbdce74d9fa4519ade446e",
-      "bytes": 61837702,
+      "url": "https://github.com/ZauditAI/zaudit-web/releases/download/windows-0.18.2/Zaudit-Local-0.18.2-Windows-x64-Setup.exe",
+      "sha256": "f7983c89f2ccf5ce3210fb9ee5ce3c988a3965e9d62366d95922d7eb13ede6d1",
+      "bytes": 61890661,
       "label": "Windows x64",
       "architectures": [
         "x64"
       ],
       "authenticode": false,
-      "version": "0.18.1"
+      "version": "0.18.2"
     }
   },
   "gateway": "https://zaudit-gateway-production.up.railway.app",
