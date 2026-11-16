@@ -34,8 +34,8 @@ export default function App(){
  ['How do I install it?','Choose your operating system under Downloads. On Windows, run the installer. On Mac, open the disk image and drag Zaudit Local to Applications.'],
  ['Do I need to stay online?','Sign-in and AI need internet. Windows setup may need internet to install Microsoft WebView2. After installation you can keep books offline.'],
  ['Where are my books kept?','On the computer running Zaudit. Keep regular backups. If you use online assistance, the information needed for that request is sent to the service.'],
- ['Can I bring my Tally data?','Read the preparation guides before moving any books. The desktop app does not yet import Tally backups, XML or spreadsheets. Keep your existing system for your live accounts.'],
- ['Is it ready for my business?','This is an early-access accounting app for testing. Basic stock receipts, issues and transfers are available. GST, payroll and migration are not included yet. It is not a complete Tally replacement.']
+ ['Can I bring my Tally data?','On Windows 0.18.1, import opening balances from a supported Tally .1800 company folder ZIP. The Tally guide explains which records carry over.'],
+ ['Is it ready for my business?','Windows 0.18.1 supports monthly pay runs with amounts you enter. You can compare a prepared GSTR-1 B2B file with sales. Statutory payroll calculations, GST submission and full Tally migration are still in development.']
  ].map(([q,a])=><details key={q}><summary>{q}<Plus size={17}/></summary><p>{a}</p></details>)}</div></section>
  <section className="last-call wrap"><h2>Let’s get your books in order.</h2><button className="button" onClick={()=>setModal('download')}>Get Zaudit <ArrowUpRight size={18}/></button></section>
  </>}</main><footer className="footer wrap"><a href="#/" className="wordmark"><span className="brand-mark">z</span>zaudit.</a><span>Made for small businesses.</span><div><button className="text-button" onClick={()=>setModal('download')}>Downloads</button><a href="#/imports">Import guides</a><a href="#/shortcuts">Shortcuts</a><span>© 2026 Zaudit</span></div></footer>
