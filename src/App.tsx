@@ -34,7 +34,7 @@ export default function App(){
  ['How do I install it?','Choose your operating system under Downloads. On Windows, run the installer. On Mac, open the disk image and drag Zaudit Local to Applications.'],
  ['Do I need to stay online?','Sign-in and AI need internet. Windows setup may need internet to install Microsoft WebView2. After installation you can keep books offline.'],
  ['Where are my books kept?','On the computer running Zaudit. Keep regular backups. If you use online assistance, the information needed for that request is sent to the service.'],
- ['Can I bring my Tally data?','On Windows, import the ledger history from a supported Tally .1800 company ZIP. Open the Tally guide for the steps.'],
+ ['Can I bring my Tally data?','On Mac or Windows, import the ledger history from a supported Tally .1800 company ZIP. Open the Tally guide for the steps.'],
  ['Is it ready for my business?','Windows supports monthly pay runs with amounts you enter. You can compare a prepared GSTR-1 B2B file with sales. Statutory payroll calculations, GST submission and full Tally migration are still in development.']
  ].map(([q,a])=><details key={q}><summary>{q}<Plus size={17}/></summary><p>{a}</p></details>)}</div></section>
  <section className="last-call wrap"><h2>Let’s get your books in order.</h2><button className="button" onClick={()=>setModal('download')}>Get Zaudit <ArrowUpRight size={18}/></button></section>

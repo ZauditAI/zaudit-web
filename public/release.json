@@ -1,11 +1,15 @@
 {
-  "version": "0.18.0-preview",
+  "version": "0.18.3-preview",
   "downloads": {
     "mac": {
-      "url": "/downloads/Zaudit-Local-0.18.0-arm64-preview.dmg",
-      "sha256": "071557a299022e0b0b6f0e25bcd391e2a860e666fd1603992de1be4536ad6cf0",
+      "url": "/downloads/Zaudit-Local-0.18.3-arm64-preview.dmg",
+      "sha256": "20347a7327e90d9de6dc829df675e4e3a5bb693e9462948932362afdac2b6e39",
       "label": "Mac Apple Silicon early access",
-      "bytes": 981940
+      "bytes": 10451481,
+      "version": "0.18.3",
+      "architectures": [
+        "arm64"
+      ]
     },
     "windows": {
       "url": "https://github.com/ZauditAI/zaudit-web/releases/download/windows-0.18.2/Zaudit-Local-0.18.2-Windows-x64-Setup.exe",
