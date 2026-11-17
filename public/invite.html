@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Activate your Zaudit invitation</title>
+<style>
+body{margin:0;background:#f8f8f3;color:#20232a;font:17px/1.5 system-ui,sans-serif}main{max-width:30rem;margin:10vh auto;padding:1.5rem}h1{line-height:1.15}input,button{display:block;box-sizing:border-box;padding:.7rem;font:inherit;margin:.5rem 0 1rem}input{width:100%}button{background:#243dd0;color:white;border:0;cursor:pointer}a{color:#243dd0}
+</style>
+<main>
+<a href="/">Zaudit</a><h1>Activate your invitation</h1>
+<form id="setup" hidden><p>Choose the password you’ll use in Zaudit Local.</p><label for="password">Password (at least 10 characters)</label><input type="password" id="password" autocomplete="new-password" minlength="10" required><button>Set password</button></form>
+<p role="status" id="message">Open the personal invitation link from your email.</p>
+<p id="next" hidden><a href="/#/start">Download Zaudit Local</a>, open a company and choose <strong>AI assistance → Sign in</strong>.</p>
+<a href="mailto:vaibhavmaloopm@gmail.com?subject=Zaudit%20invitation">Get help with your invitation</a>
+</main>
+<script type="module">
+const token = new URLSearchParams(location.hash.slice(1)).get('invite');
+history.replaceState(null, '', location.pathname);
+const form = document.querySelector('#setup');
+const status = document.querySelector('#message');
+const field = document.querySelector('#password');
+const root = 'https://cbarmkjfzafbjwqmzxyb.supabase.co/auth/v1';
+const headers = {'Content-Type':'application/json', apikey:'sb_publishable_cvA2PQighy7EodmHcL4FIQ_XyHaNxWj'};
+let session;
+if (token) { form.hidden = false; status.textContent = ''; }
+form.addEventListener('submit', async event => {
+  event.preventDefault();
+  const button = form.querySelector('button');
+  button.disabled = true;
+  status.textContent = 'Activating…';
+  try {
+    if (!session) {
+      const verify = await fetch(root + '/verify', {method:'POST',headers,body:JSON.stringify({type:'invite',token_hash:token})});
+      if (!verify.ok) throw new Error('This link has expired or was already used. Sign in if you already set a password, or email us for a fresh invitation.');
+      session = (await verify.json()).access_token;
+      if (!session) throw new Error('Could not verify the invitation. Please email us for help.');
+    }
+    const update = await fetch(root + '/user', {method:'PUT',headers:{...headers,Authorization:'Bearer ' + session},body:JSON.stringify({password:field.value})});
+    if (!update.ok) throw new Error('Could not save that password. Try another password or email us for help.');
+    session = null;
+    form.reset(); form.hidden = true;
+    status.textContent = 'Your password is set. Sign in with the email address that received the invitation.';
+    document.querySelector('#next').hidden = false;
+  } catch (error) {
+    status.textContent = error.message;
+  } finally { button.disabled = false; }
+});
+</script>
+</html>
