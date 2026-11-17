@@ -36,6 +36,13 @@ export default function TallyGuide({download}: {download: () => void}) {
     </section>
 
     <section className="guide-section">
+      <h2>Use AI with your imported books</h2>
+      <p>Select the company you imported, connect to the internet and open <strong>AI assistance</strong>. Sign in with your invited account. If the app asks you to activate your trial, <a href="mailto:vaibhavmaloopm@gmail.com?subject=Try%20Zaudit%20AI">email us for access</a>.</p>
+      <p>Start with a lookup. For example, type “Show the Cash ledger for April 2025.” Use a ledger name and dates from your company. Choose <strong>Make a plan</strong>. Zaudit sends your request and relevant company records to its AI providers and checks the proposed steps on your computer.</p>
+      <p>To record a real payment, include the date, amount, expense ledger and bank or cash ledger. Check those details in the preview, then choose <strong>Approve and run workflow</strong>. Open <strong>Day book</strong> to check the entry. AI uses the records available in Zaudit, so historical bills require verified invoice balances before you can allocate payments against them.</p>
+    </section>
+
+    <section className="guide-section">
       <h2>If you get stuck</h2>
       <p><strong>No import option?</strong> Install Mac version 0.18.3 or Windows version 0.18.2 or later. Open Zaudit Local on your computer.</p>
       <p><strong>ZIP rejected?</strong> Check that the three files in step 1 are together in one folder inside the ZIP. If the archive contains several companies, make a ZIP of just the one you want. If Zaudit still shows an error, send us the message and your app version. Keep your company files private.</p>
